@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>vr-cube</title>
+	<style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            html,body {
+                height: 100%;
+            }
+            body {
+                font-size: 14px;
+                font-family: "Arial","Microsoft YaHei","黑体",sans-serif;
+                overflow: hidden;
+            }
+            html,body,.main-page {
+                position: relative;
+                height: 100%;
+                overflow: hidden;
+            }
+            .vr-btn {
+                position: fixed;
+                right: 18px;
+                bottom: 18px;
+                padding: 8px 12px;
+                background-color: #00aadd;
+                text-align: center;
+                color: #fff;
+                font-size: 14px;
+                cursor: pointer;
+                z-index: 100;
+            }
+        </style>
+    </head>
+    <body>
+        <section class="main-page">
+            <div class="vr-btn">进入VR</div>
+        </section>
+    <script src="../../lib/webxr-polyfill.min.js"></script>
+    <script src="../../lib/three.min.js"></script>
+    <script src="../../common/xrbase.js"></script>
+</body>
+</html>
