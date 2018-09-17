@@ -1,3 +1,0 @@
-class XRBase {
-    constructor() {}
-}
