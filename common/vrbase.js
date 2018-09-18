@@ -38,15 +38,23 @@ class VRBase {
             xrSession.baseLayer = new XRWebGLLayer(xrSession, gl);
             this.xrSession = xrSession;
             this.xrFrameOfRef = xrFrameOfRef;
-            xrSession.requestAnimationFrame(drawXRFrame.bind(this));
+            drawXRFrame();
         } catch(err) {
 
         }
     }
     drawXRFrame(timestamp, xrFrame) {
-        const { xrFrameOfRef } = this;
+        const { gl, xrFrameOfRef } = this;
         let pose = xrFrame.getDevicePose(xrFrameOfRef);
-
+        gl.bindFramebuffer(gl.FRAMEBUFFER, xrSession.baseLayer.framebuffer);
+        for (let view of xrFrame.views) {
+            let viewport = xrSession.baseLayer.getViewport(view);
+            gl.viewport(viewport.x, viewport.y, viewport.width, viewport.height);
+            drawScene(view, pose);
+          }
+      
+          // Request the next animation callback
+          xrSession.requestAnimationFrame(drawXRFrame);
     }
     _createVRButton() {
         const { el, onEnterVR } = this;
