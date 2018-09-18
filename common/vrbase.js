@@ -5,6 +5,7 @@ class VRBase {
         this.gl;
         this.xrDevice;
         this.xrSession;
+        this.xrFrameOfRef;
         this.addCanvas();
         this.checkForXR();
     }
@@ -30,22 +31,30 @@ class VRBase {
         }
     }
     async onEnterVR() {
-        const { xrDevice, gl } = this;
+        const { xrDevice, gl, drawXRFrame } = this;
         try {
-            const xrSession = await xrDevice.requestSession({ immersive: true });
-            const xrFrameOfRef = await xrSession.requestFrameOfReference("stage");
+            let xrSession = await xrDevice.requestSession({ immersive: true });
+            let xrFrameOfRef = await xrSession.requestFrameOfReference("stage");
             xrSession.baseLayer = new XRWebGLLayer(xrSession, gl);
             this.xrSession = xrSession;
+            this.xrFrameOfRef = xrFrameOfRef;
+            xrSession.requestAnimationFrame(drawXRFrame.bind(this));
         } catch(err) {
 
         }
     }
+    drawXRFrame(timestamp, xrFrame) {
+        const { xrFrameOfRef } = this;
+        let pose = xrFrame.getDevicePose(xrFrameOfRef);
+
+    }
     _createVRButton() {
-        const {el} = this;
-        const enterXrBtn = document.createElement("button");
+        const { el, onEnterVR } = this;
+        let enterXrBtn = document.createElement("button");
         enterXrBtn.innerHTML = "Enter VR";
-        enterXrBtn.addEventListener("click", this.onEnterVR.bind(this));
+        enterXrBtn.addEventListener("click", onEnterVR.bind(this));
         el.appendChild(enterXrBtn);
     }
+    
     update() {}
 }
