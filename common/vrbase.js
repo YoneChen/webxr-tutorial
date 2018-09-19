@@ -44,13 +44,15 @@ class VRBase {
         }
     }
     drawXRFrame(timestamp, xrFrame) {
-        const { gl, xrFrameOfRef } = this;
+        const { gl, xrFrameOfRef, update } = this;
         let pose = xrFrame.getDevicePose(xrFrameOfRef);
         gl.bindFramebuffer(gl.FRAMEBUFFER, xrSession.baseLayer.framebuffer);
         for (let view of xrFrame.views) {
             let viewport = xrSession.baseLayer.getViewport(view);
             gl.viewport(viewport.x, viewport.y, viewport.width, viewport.height);
-            drawScene(view, pose);
+            let viewMatrix = pose.getViewMatrix(view);
+            let projectionMatrix = view.projectionMatrix;
+            update(viewMatrix,projectionMatrix);
           }
       
           // Request the next animation callback
