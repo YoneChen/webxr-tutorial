@@ -39,10 +39,56 @@
     </head>
     <body>
         <section class="main-page">
-            <div class="vr-btn">进入VR</div>
         </section>
-    <script src="../../lib/webxr-polyfill.min.js"></script>
+    <!-- <script src="../../lib/webxr-polyfill.min.js"></script> -->
     <script src="../../lib/three.min.js"></script>
     <script src="../../common/vrbase.js"></script>
+    <script>
+        class App extends VRBase {
+            start() {
+                const { scene } = this;
+                // 创建光线
+                scene.add(new THREE.AmbientLight(0xFFFFFF));
+                scene.add(this.createLight());
+                // 创建立方体
+                for (let i = 0; i < 100; i++) {
+                    const cube = this.createCube(2, 2, 2);
+                    cube.position.set(
+                        100 * Math.random() - 50,
+                        50 * Math.random() - 10,
+                        100 * Math.random() - 50
+                    );
+                    scene.add(cube);
+                }
+            }
+            createCube(width = 2, height = 2, depth = 2, color = 0xef6500) {
+                // 创建立方体
+
+                const geometry = new THREE.CubeGeometry(width, height, depth);
+                const material = new THREE.MeshLambertMaterial({
+                    color: color,
+                    needsUpdate: true,
+                    opacity: 1,
+                    transparent: true
+                });
+                const cube = new THREE.Mesh(geometry, material);
+                cube.castShadow = true;
+                return cube;
+            }
+            createLight() {
+                // 创建光线
+                const light = new THREE.DirectionalLight(0xffffff, 0.3);
+                light.position.set(50, 50, -50);
+                light.castShadow = true;
+                light.shadow.mapSize.width = 2048;
+                light.shadow.mapSize.height = 512;
+                return light;
+            }
+            update() {
+                
+            }
+        }
+        new App(document.querySelector('.main-page'));
+    </script>
 </body>
 </html>
