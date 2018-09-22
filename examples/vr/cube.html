@@ -16,14 +16,12 @@
             body {
                 font-size: 14px;
                 font-family: "Arial","Microsoft YaHei","黑体",sans-serif;
-                overflow: hidden;
             }
-            html,body,.main-page {
+            .main-page {
                 position: relative;
                 height: 100%;
-                overflow: hidden;
             }
-            .vr-btn {
+            .main-page > button {
                 position: fixed;
                 right: 18px;
                 bottom: 18px;
@@ -40,7 +38,7 @@
     <body>
         <section class="main-page">
         </section>
-    <!-- <script src="../../lib/webxr-polyfill.min.js"></script> -->
+    <script src="../../lib/webxr-polyfill.min.js"></script>
     <script src="../../lib/three.min.js"></script>
     <script src="../../common/vrbase.js"></script>
     <script>
