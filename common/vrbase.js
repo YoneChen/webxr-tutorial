@@ -21,10 +21,25 @@ class VRBase {
         document.querySelector('.main-page').appendChild(this.renderer.domElement);
         this.gl = this.renderer.getContext();
     }
+    async _checkForMagicWindow() {
+        const { gl } = this;
+        try {
+            debugger;
+            const xrDevice = await navigator.xr.requestDevice();
+            await xrDevice.supportsSession({ immersive: false });
+            await gl.setCompatibleXRDevice(xrDevice);
+            this._createVRButton();
+            this.xrDevice = xrDevice;
+        } catch(err) {
+            console.error(err);
+            this._drawFrame();
+        }
+    }
     async _checkForXR() {
         const { gl } = this;
         try {
             const xrDevice = await navigator.xr.requestDevice();
+            console.log(xrDevice);
             await xrDevice.supportsSession({ immersive: true });
             await gl.setCompatibleXRDevice(xrDevice);
             this._createVRButton();
@@ -42,7 +57,7 @@ class VRBase {
             xrSession.baseLayer = new XRWebGLLayer(xrSession, gl);
             this.xrSession = xrSession;
             this.xrFrameOfRef = xrFrameOfRef;
-            this._drawXRFrame();
+            xrSession.requestAnimationFrame(this._drawXRFrame.bind(this));
         } catch(err) {
             console.error(err);
         }
@@ -54,7 +69,7 @@ class VRBase {
         window.requestAnimationFrame(this._drawFrame.bind(this));
     }
     _drawXRFrame(timestamp, xrFrame) {
-        const { gl, xrFrameOfRef, renderer, camera, scene } = this;
+        const { gl, xrFrameOfRef, xrSession, renderer, camera, scene } = this;
         let pose = xrFrame.getDevicePose(xrFrameOfRef);
         gl.bindFramebuffer(gl.FRAMEBUFFER, xrSession.baseLayer.framebuffer);
         for (let view of xrFrame.views) {
