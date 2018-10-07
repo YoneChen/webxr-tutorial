@@ -44,6 +44,9 @@
     <script src="../../common/vrbase.js"></script>
     <script>
         class App extends VRBase {
+            constructor() {
+                super(document.querySelector('.main-page'));
+            }
             start() {
                 const { scene } = this;
                 // 创建光线

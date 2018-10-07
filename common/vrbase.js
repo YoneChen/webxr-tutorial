@@ -18,13 +18,12 @@ class VRBase {
 		this.renderer.setSize(el.clientWidth, el.clientHeight);
 		this.renderer.shadowMapEnabled = true;
         this.renderer.setPixelRatio(window.devicePixelRatio);
-        document.querySelector('.main-page').appendChild(this.renderer.domElement);
+        el.appendChild(this.renderer.domElement);
         this.gl = this.renderer.getContext();
     }
     async _checkForMagicWindow() {
         const { gl } = this;
         try {
-            debugger;
             const xrDevice = await navigator.xr.requestDevice();
             await xrDevice.supportsSession({ immersive: false });
             await gl.setCompatibleXRDevice(xrDevice);
