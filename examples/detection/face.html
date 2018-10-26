@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>face-dection</title>
+	<style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            html,body {
+                height: 100%;
+            }
+            body {
+                font-size: 14px;
+                font-family: "Arial","Microsoft YaHei","黑体",sans-serif;
+            }
+            .main-page {
+                position: relative;
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <section class="main-page">
+        </section>
+    <script src="../../common/rtcbase.js"></script>
+    <script>
+        class App extends RTCBase {
+            constructor(el) {
+                super(el);
+                this.faceDetector = new FaceDetector();
+                this.img = new Image();
+                this.img.onload = () => {
+                    this.detectFace(this.img);
+                };
+                this.faces = [];
+            }
+            async detectFace(image) {
+                try {
+                    this.faces = await this.faceDetector.detect(image);
+                } catch(e) {
+                    console.error("Boo, Face Detection failed: " + e);
+                };
+            }
+            drawRect(faces) {
+                const {ctx} = this;
+                faces.forEach(face => {
+                    const {boundingBox} = face;
+                    ctx.strokeStyle = '#00aadd';
+                    ctx.lineWidth = 4;
+                    console.log(boundingBox.x);
+                    ctx.strokeRect(boundingBox.x,boundingBox.y,boundingBox.width,boundingBox.height);
+                })
+            }
+            update() {
+                let data = this.canvas.toDataURL('image/jpeg',0.7);
+
+                this.img.src = data;
+                    this.drawRect(this.faces);
+            }
+        }
+        new App(document.querySelector('.main-page'));
+    </script>
+</body>
+</html>
