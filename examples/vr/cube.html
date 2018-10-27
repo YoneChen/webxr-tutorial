@@ -44,8 +44,8 @@
     <script src="../../common/vrbase.js"></script>
     <script>
         class App extends VRBase {
-            constructor() {
-                super(document.querySelector('.main-page'));
+            constructor(el) {
+                super(el);
             }
             start() {
                 const { scene } = this;
