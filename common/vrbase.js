@@ -52,6 +52,7 @@ class VRBase {
         const { xrDevice, gl } = this;
         try {
             let xrSession = await xrDevice.requestSession({ immersive: true });
+            xrSession.addEventListener('end', this.onSessionEnd.bind(this));
             let xrFrameOfRef = await xrSession.requestFrameOfReference("stage");
             xrSession.baseLayer = new XRWebGLLayer(xrSession, gl);
             this.xrSession = xrSession;
@@ -61,6 +62,9 @@ class VRBase {
             console.error(err);
         }
     }
+    onSessionEnd() {
+        this.xrSession = null;
+    }
     _drawFrame(timestamp) {
         const { renderer, camera, scene } = this;
         this.update();
@@ -69,11 +73,11 @@ class VRBase {
     }
     _drawXRFrame(timestamp, xrFrame) {
         const { gl, xrFrameOfRef, xrSession, renderer, camera, scene } = this;
+            this.update();
         let pose = xrFrame.getDevicePose(xrFrameOfRef);
         gl.bindFramebuffer(gl.FRAMEBUFFER, xrSession.baseLayer.framebuffer);
+        renderer.setSize(xrSession.baseLayer.framebufferWidth, xrSession.baseLayer.framebufferHeight, false);
         for (let view of xrFrame.views) {
-            let viewport = xrSession.baseLayer.getViewport(view);
-            renderer.setSize(viewport.width, viewport.height);
     
             camera.projectionMatrix.fromArray(view.projectionMatrix);
             const viewMatrix = new THREE.Matrix4().fromArray(pose.getViewMatrix(view));
@@ -81,7 +85,8 @@ class VRBase {
             camera.updateMatrixWorld(true);
     
             renderer.clearDepth();
-            this.update();
+            let viewport = xrSession.baseLayer.getViewport(view);
+            renderer.setViewport(viewport.x, viewport.y,viewport.width, viewport.height);
     
             renderer.render(scene, camera);
             // gl.viewport(viewport.x, viewport.y, viewport.width, viewport.height);
